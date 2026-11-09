@@ -1,7 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using Sporty.Data.Contexts;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+var connectionString = builder.Configuration
+    .GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string not found.");
+builder.Services.AddDbContext<SportyDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 
