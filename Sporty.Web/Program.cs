@@ -16,6 +16,9 @@ builder.Services.AddDbContext<SportyDbContext>(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<IGeocodingService, NominatimGeocodingService>();
 
+// Register Weather service stub (used for mock weather forecast and 5-day horizon validation)
+builder.Services.AddScoped<IWeatherService, OpenWeatherMapServiceStub>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
