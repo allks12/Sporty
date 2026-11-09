@@ -1,8 +1,104 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Начало";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="sporty-hero">
+    <p>ТВОЯТ СПОРТ. ТВОИТЕ ХОРА.</p>
+    <img src="~/images/sporty-sports.svg"
+         class="sporty-hero-illustration"
+         width="150"
+         height="150"
+         alt="" />
+
+    <h1>
+        Излез.<br />
+        Играй.<br />
+        Повтори.
+    </h1>
+
+    <p>
+        Добрият мач започва с добра компания.<br />
+        Намери своята в Sporty.
+    </p>
+
+    <div class="sporty-hero-actions">
+        <button type="button" class="sporty-button-primary">
+            Намери следващата игра →
+        </button>
+
+        <button type="button" class="sporty-button-secondary">
+            Създай група
+        </button>
+    </div>
+</section>
+<section class="sporty-upcoming">
+    <h2>Предстоящи игри</h2>
+    <p class="sporty-upcoming-description">
+        София • Най-близки по дата
+    </p>
+    <div class="sporty-games-grid">
+    <article class="sporty-game-card">
+        <div class="sporty-game-card-header">
+                <span class="sporty-game-category">
+                    <img src="~/images/sport-football.svg"
+                         width="28" height="28" alt="" />
+                    ФУТБОЛ
+                </span>
+            <span class="sporty-game-status">Отворена</span>
+        </div>
+
+        <h3>Вечерен мач в Младост</h3>
+
+        <p>24 окт. • 18:30–20:00</p>
+        <p class="sporty-game-location">
+            Спортна база Младост • София
+        </p>
+        <p class="sporty-game-limits">Минимум 8 • Максимум 12</p>
+
+        <progress class="sporty-game-progress"
+                  value="8"
+                  max="12"
+                  aria-label="8 от 12 участници">
+        </progress>
+
+        <div class="sporty-game-card-footer">
+            <span>8 от 12 участници</span>
+            <button type="button" class="sporty-game-details">
+                Виж групата →
+            </button>
+        </div>
+    </article>
+    <article class="sporty-game-card sporty-game-card-full">
+        <div class="sporty-game-card-header">
+                <span class="sporty-game-category">
+                    <img src="~/images/sport-basketball.svg"
+                         width="28" height="28" alt="" />
+                    БАСКЕТБОЛ
+                </span>
+            <span class="sporty-game-status">Пълна</span>
+        </div>
+
+        <h3>Баскетбол след работа</h3>
+
+        <p>24 окт. • 19:00–20:00</p>
+        <p class="sporty-game-location">Южен парк • София</p>
+        <p class="sporty-game-limits">Минимум 6 • Максимум 10</p>
+
+        <progress class="sporty-game-progress"
+                  value="10"
+                  max="10"
+                  aria-label="10 от 10 участници">
+        </progress>
+
+        <div class="sporty-game-card-footer">
+            <span>10 от 10 участници</span>
+            <button type="button" class="sporty-game-details">
+                Виж групата →
+            </button>
+        </div>
+    </article>
+    </div>
+    <button type="button" class="sporty-all-groups">
+        Виж всички групи
+    </button>
+</section>

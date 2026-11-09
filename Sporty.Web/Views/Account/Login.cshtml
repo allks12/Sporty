@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Вход";
+    ViewData["HideMobileNav"] = true;
+}
+
+<section class="sporty-auth">
+    <h1>Вход</h1>
+    <p class="sporty-auth-description">
+        Твоите групи и следващият мач са тук.
+    </p>
+
+    <form class="sporty-auth-form"
+          method="post"
+          onsubmit="return false;">
+
+        <div class="sporty-auth-field">
+            <label for="login-email">Имейл</label>
+            <input id="login-email"
+                   name="Email"
+                   type="email"
+                   placeholder="ivan@example.com"
+                   autocomplete="username"
+                   required />
+        </div>
+
+        <div class="sporty-auth-field">
+            <label for="login-password">Парола</label>
+            <input id="login-password"
+                   name="Password"
+                   type="password"
+                   placeholder="••••••••"
+                   autocomplete="current-password"
+                   required />
+        </div>
+
+        <button type="submit" class="sporty-auth-submit">
+            Вход
+        </button>
+    </form>
+
+    <a class="sporty-auth-link"
+       asp-controller="Account"
+       asp-action="Register">
+        Нямаш профил? Регистрирай се →
+    </a>
+
+    <aside class="sporty-auth-message">
+        <h2>Време е за още една игра.</h2>
+        <p>Събери компания за любимия си спорт.</p>
+    </aside>
+</section>

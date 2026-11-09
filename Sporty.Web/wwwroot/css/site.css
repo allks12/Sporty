@@ -1,4 +1,4 @@
-html {
+ html {
   font-size: 14px;
 }
 
@@ -29,3 +29,473 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+
+.sporty-hero {
+    background-color: #18352b;
+    color: #ffffff;
+    border-radius: 24px;
+    padding: 32px 24px;
+    margin: 24px 0;
+}
+
+    .sporty-hero > p:first-child {
+        color: #d3f36b;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .sporty-hero h1 {
+        color: #ffffff;
+        font-size: 42px;
+        font-weight: 700;
+        line-height: 1.1;
+        margin: 20px 0;
+    }
+
+    .sporty-hero > p:last-of-type {
+        color: #dfe8e1;
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+.sporty-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+    .sporty-hero-actions button {
+        min-height: 48px;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+.sporty-button-primary {
+    background-color: #d3f36b;
+    color: #18352b;
+    border: 1px solid #d3f36b;
+}
+
+.sporty-button-secondary {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #dfe8e1;
+}
+
+@media (max-width: 576px) {
+    .sporty-hero-actions {
+        flex-direction: column;
+    }
+
+        .sporty-hero-actions button {
+            width: 100%;
+        }
+}
+
+
+.sporty-header {
+    background-color: #126748;
+}
+
+    .sporty-header .navbar {
+        padding: 16px 0;
+    }
+
+    .sporty-header .navbar-brand {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .sporty-header .nav-link {
+        padding: 8px 16px;
+    }
+
+        .sporty-header .nav-link:hover {
+            text-decoration: underline;
+        }
+
+
+.sporty-upcoming {
+    margin: 32px 0;
+}
+
+    .sporty-upcoming h2 {
+        color: #18352b;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+.sporty-upcoming-description {
+    color: #60756b;
+    margin: 16px 0 24px;
+}
+
+
+.sporty-game-card {
+    max-width: 420px;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #dfe8e1;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px #0824170e;
+    color: #18352b;
+}
+
+.sporty-game-card-header,
+.sporty-game-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.sporty-game-category {
+    color: #126748;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.sporty-game-status {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    font-size: 12px;
+}
+
+.sporty-game-card h3 {
+    margin: 16px 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.sporty-game-card p {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.sporty-game-location,
+.sporty-game-limits,
+.sporty-game-card-footer {
+    color: #60756b;
+}
+
+.sporty-game-limits,
+.sporty-game-card-footer {
+    font-size: 12px;
+}
+
+.sporty-game-progress {
+    display: block;
+    width: 100%;
+    height: 6px;
+    margin: 12px 0;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #ddefe4;
+}
+
+    .sporty-game-progress::-webkit-progress-bar {
+        background-color: #ddefe4;
+    }
+
+    .sporty-game-progress::-webkit-progress-value {
+        background-color: #126748;
+        border-radius: 8px;
+    }
+
+    .sporty-game-progress::-moz-progress-bar {
+        background-color: #126748;
+        border-radius: 8px;
+    }
+
+.sporty-game-details {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #126748;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.sporty-game-card + .sporty-game-card {
+    margin-top: 16px;
+}
+
+
+.sporty-game-card-full .sporty-game-status {
+    background-color: #fff3e6;
+    color: #9a4b05;
+}
+
+.sporty-game-card-full .sporty-game-progress::-webkit-progress-value {
+    background-color: #9a4b05;
+}
+
+.sporty-game-card-full .sporty-game-progress::-moz-progress-bar {
+    background-color: #9a4b05;
+}
+
+.sporty-games-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+}
+
+    .sporty-games-grid > .sporty-game-card {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        margin: 0;
+    }
+
+
+@media (min-width: 768px) {
+    .sporty-games-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.sporty-all-groups {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 16px;
+    padding: 12px 24px;
+    border: 1px solid #dfe8e1;
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: #126748;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .sporty-all-groups:hover {
+        background-color: #ddefe4;
+    }
+
+body {
+    background-color: #f3f7f4;
+    color: #18352b;
+}
+
+
+.sporty-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 150px;
+    column-gap: 16px;
+    align-items: center;
+}
+
+    .sporty-hero > p:first-child,
+    .sporty-hero > p:last-of-type,
+    .sporty-hero-actions {
+        grid-column: 1 / -1;
+    }
+
+    .sporty-hero h1 {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+.sporty-hero-illustration {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+}
+
+
+@media (max-width: 575px) {
+    .sporty-hero {
+        padding: 24px 16px;
+        column-gap: 8px;
+    }
+
+        .sporty-hero h1 {
+            font-size: 30px;
+        }
+}
+
+.sporty-mobile-nav {
+    display: none;
+}
+
+
+
+@media (max-width: 767px) {
+    body {
+        padding-bottom: 80px;
+    }
+
+    .sporty-mobile-nav {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        gap: 4px;
+        padding: 10px 8px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        background-color: #ffffff;
+        border-top: 1px solid #dfe8e1;
+    }
+
+    .sporty-mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        gap: 4px;
+        padding: 4px 2px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: #126748;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 16px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+        .sporty-mobile-nav-item:hover {
+            background-color: #ddefe4;
+            color: #126748;
+        }
+
+        .sporty-mobile-nav-item img {
+            display: block;
+            flex-shrink: 0;
+        }
+}
+
+
+.sporty-game-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .sporty-game-category img {
+        display: block;
+        flex-shrink: 0;
+    }
+
+
+.sporty-auth {
+    max-width: 420px;
+    margin: 24px auto;
+    padding: 0 8px;
+}
+
+    .sporty-auth h1 {
+        margin-bottom: 20px;
+        color: #18352b;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 30px;
+    }
+
+.sporty-auth-description {
+    margin-bottom: 24px;
+    color: #60756b;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.sporty-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sporty-auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .sporty-auth-field label {
+        color: #18352b;
+        font-size: 14px;
+    }
+
+    .sporty-auth-field input {
+        width: 100%;
+        min-height: 48px;
+        padding: 12px;
+        border: 1px solid #dfe8e1;
+        border-radius: 12px;
+        background-color: #ffffff;
+        color: #18352b;
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+        .sporty-auth-field input::placeholder {
+            color: #60756b;
+        }
+
+        .sporty-auth-field input:focus {
+            outline: 2px solid #126748;
+            outline-offset: 2px;
+        }
+
+.sporty-auth-submit {
+    min-height: 48px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background-color: #126748;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.sporty-auth-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #126748;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+    .sporty-auth-link:hover {
+        text-decoration: underline;
+    }
+
+.sporty-auth-message {
+    margin-top: 24px;
+    padding: 16px;
+    border-radius: 16px;
+    background-color: #ddefe4;
+}
+
+    .sporty-auth-message h2 {
+        margin-bottom: 12px;
+        color: #18352b;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 24px;
+    }
+
+    .sporty-auth-message p {
+        margin: 0;
+        color: #126748;
+        font-size: 16px;
+        line-height: 24px;
+    }
