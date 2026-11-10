@@ -9,10 +9,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Sporty.Data\Sporty.Data.csproj" />
+      <ProjectReference Include="..\Sporty.Services\Sporty.Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="wwwroot\images\" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.4" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.4">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
