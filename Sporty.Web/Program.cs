@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sporty.Data.Contexts;
+using Sporty.Web.Weather;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,13 @@ var connectionString = builder.Configuration
     ?? throw new InvalidOperationException("Connection string not found.");
 builder.Services.AddDbContext<SportyDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// Register Geocoding service and MemoryCache (used for 24-hour caching of Nominatim coordinates)
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<IGeocodingService, NominatimGeocodingService>();
+
+// Register Weather service stub (used for mock weather forecast and 5-day horizon validation)
+builder.Services.AddScoped<IWeatherService, OpenWeatherMapServiceStub>();
 
 var app = builder.Build();
 
