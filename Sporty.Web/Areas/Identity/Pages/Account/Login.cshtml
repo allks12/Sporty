@@ -1,0 +1,53 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Вход";
+    ViewData["HideMobileNav"] = true;
+}
+
+<section class="sporty-auth">
+    <h1>Вход</h1>
+    <p class="sporty-auth-description">
+        Твоите групи и следващият мач са тук.
+    </p>
+
+    <form id="account" class="sporty-auth-form" method="post" asp-route-returnUrl="@Model.ReturnUrl">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="sporty-auth-field">
+            <label asp-for="Input.Email">Имейл</label>
+            <input asp-for="Input.Email"
+                   type="email"
+                   placeholder="ivan@example.com"
+                   autocomplete="username"
+                   aria-required="true" />
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+
+        <div class="sporty-auth-field">
+            <label asp-for="Input.Password">Парола</label>
+            <input asp-for="Input.Password"
+                   placeholder="••••••••"
+                   autocomplete="current-password"
+                   aria-required="true" />
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+
+        <button id="login-submit" type="submit" class="sporty-auth-submit">
+            Вход
+        </button>
+    </form>
+
+    <a class="sporty-auth-link" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">
+        Нямаш профил? Регистрирай се →
+    </a>
+
+    <aside class="sporty-auth-message">
+        <h2>Време е за още една игра.</h2>
+        <p>Събери компания за любимия си спорт.</p>
+    </aside>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
