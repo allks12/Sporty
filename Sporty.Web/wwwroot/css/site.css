@@ -499,3 +499,19 @@ body {
         font-size: 16px;
         line-height: 24px;
     }
+
+.sporty-header .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sporty-logo {
+    width: 52px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.sporty-header .navbar {
+    padding: 6px 0;
+}
