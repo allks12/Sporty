@@ -1,0 +1,57 @@
+﻿@model Sporty.Web.Models.GroupSearchViewModel
+
+@{
+    ViewData["Title"] = "Търсене на игри";
+}
+
+<section class="sporty-search">
+    <h1>Търсене на игри</h1>
+    <p>Намери компания за любимия си спорт.</p>
+
+    <form asp-controller="Groups"
+          asp-action="Index"
+          method="get"
+          class="sporty-search-form">
+
+        <div class="sporty-auth-field">
+            <label asp-for="Filter.SportId">Спорт</label>
+            <select asp-for="Filter.SportId"
+                    asp-items="Model.Sports">
+                <option value="">Всички спортове</option>
+            </select>
+        </div>
+
+        <div class="sporty-auth-field">
+            <label asp-for="Filter.Date">Дата</label>
+            <input asp-for="Filter.Date" type="date" />
+        </div>
+
+        <div class="sporty-auth-field">
+            <label asp-for="Filter.DistrictId">Район</label>
+            <select asp-for="Filter.DistrictId"
+                    asp-items="Model.Districts">
+                <option value="">Всички райони</option>
+            </select>
+        </div>
+        <div class="sporty-auth-field">
+            <label asp-for="Filter.LocationType">Тип място</label>
+            <select asp-for="Filter.LocationType">
+                <option value="All">Всички места</option>
+                <option value="Venue">Регистрирано игрище</option>
+                <option value="Custom">Собствена локация</option>
+            </select>
+        </div>
+        <div class="sporty-search-checkbox">
+            <input asp-for="Filter.OnlyAvailablePlaces" />
+            <label asp-for="Filter.OnlyAvailablePlaces">
+                Само със свободни места
+            </label>
+        </div>
+        <button type="submit" class="sporty-auth-submit">
+            Търси
+        </button>
+    </form>
+    <div id="search-results" class="sporty-search-results">
+        <partial name="_SearchResults" model="Model" />
+    </div>
+</section>

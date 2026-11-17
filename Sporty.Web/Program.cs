@@ -4,6 +4,8 @@ using Sporty.Data.Contexts;
 using Sporty.Data.Identity;
 using Sporty.Services.Identity;
 using Sporty.Web.Weather;
+using Sporty.Services.Groups;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,7 @@ builder.Services.ConfigureApplicationCookie(options => {
 });
 
 builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<IGroupSearchService, GroupSearchService>();
 builder.Services.AddScoped<IdentitySeeder>();
 
 var app = builder.Build();
@@ -54,7 +57,6 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope()) {
     await scope.ServiceProvider.GetRequiredService<IdentitySeeder>().SeedAsync();
 }
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
