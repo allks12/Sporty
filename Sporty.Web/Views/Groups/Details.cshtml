@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Детайли за групата";
+}
+
+<section class="sporty-details">
+    <a asp-area=""
+       asp-controller="Groups"
+       asp-action="Index"
+       class="sporty-details-back">
+        ← Назад към групите
+    </a>
+
+    @* Примерни данни за преглед на дизайна. *@
+
+    <span class="sporty-details-status">Отворена</span>
+
+    <h1>Вечерен мач в Младост</h1>
+    <p class="sporty-details-subtitle">Футбол • На открито</p>
+
+    <div class="sporty-details-card">
+        <h2>24 октомври • 18:30–20:00</h2>
+        <p>Спортна база Младост</p>
+        <p class="sporty-details-muted">
+            София, ж.к. Младост 1 • Игрище 2
+        </p>
+
+        <hr />
+
+       
+    </div>
+
+    <div class="sporty-details-card">
+        <h2>Участници • 8 / 12</h2>
+        <p class="sporty-details-muted">
+            Иван Петров • Мария Георгиева<br />
+            Алекс Стоянов • Даниела Николова<br />
+            и още 4 участници
+        </p>
+    </div>
+
+    <div class="sporty-details-weather">
+        <p class="sporty-details-weather-label">ВРЕМЕТО ЗА ИГРАТА</p>
+        <h2>Прогнозата е недостъпна</h2>
+        <p>Услугата временно не отговаря.</p>
+        <p class="sporty-details-muted">Опитай отново по-късно.</p>
+    </div>
+
+    <button type="button"
+            class="sporty-details-join"
+            disabled>
+        Включи се
+    </button>
+</section>

@@ -1,0 +1,113 @@
+﻿@model Sporty.Web.Models.GroupSearchViewModel
+
+@if (Model.Errors.Count > 0)
+{
+    <div class="text-danger" role="alert">
+        @foreach (var error in Model.Errors)
+        {
+            <p>@error</p>
+        }
+    </div>
+}
+else if (Model.Result.Items.Count == 0)
+{
+    <p role="status">
+        Няма намерени игри по избраните филтри.
+    </p>
+}
+else
+{
+    <p role="status">
+        Намерени игри: @Model.Result.TotalCount
+    </p>
+
+    <div class="sporty-games-grid">
+        @foreach (var game in Model.Result.Items)
+        {
+            <article class="sporty-game-card">
+                <div class="sporty-game-card-header">
+                    <span class="sporty-game-category">
+                        @game.SportName
+                    </span>
+
+                    <span class="sporty-game-status">
+                        Отворена
+                    </span>
+                </div>
+
+                <h3>@game.SportName — @game.DistrictName</h3>
+
+                <p>@game.StartAt.ToString("dd.MM.yyyy • HH:mm")</p>
+
+                <p class="sporty-game-location">
+                    @game.Location
+                </p>
+
+                @if (game.MinMembers.HasValue)
+                {
+                    <p class="sporty-game-limits">
+                        Минимум @game.MinMembers •
+                        Максимум @game.MaxMembers
+                    </p>
+                }
+                else
+                {
+                    <p class="sporty-game-limits">
+                        Максимум @game.MaxMembers
+                    </p>
+                }
+
+                <div class="sporty-game-card-footer">
+                    <span>
+                        @game.RegisteredMembers от
+                        @game.MaxMembers участници
+                    </span>
+
+                    <span>
+                        Свободни места: @game.AvailablePlaces
+                    </span>
+                </div>
+            </article>
+        }
+    </div>
+    @if (Model.Result.TotalPages > 1)
+    {
+        <form asp-controller="Groups"
+              asp-action="Index"
+              method="get"
+              class="d-flex flex-wrap align-items-center justify-content-center gap-3 mt-4">
+
+            <input type="hidden" asp-for="Filter.SportId" />
+            <input type="hidden"
+                   asp-for="Filter.Date"
+                   asp-format="{0:yyyy-MM-dd}" />
+            <input type="hidden" asp-for="Filter.DistrictId" />
+            <input type="hidden" asp-for="Filter.LocationType" />
+            <input type="hidden" asp-for="Filter.OnlyAvailablePlaces" />
+
+            @if (Model.Result.Page > 1)
+            {
+                <button type="submit"
+                        name="Filter.Page"
+                        value="@(Model.Result.Page - 1)"
+                        class="btn btn-outline-success">
+                    ← Предишна
+                </button>
+            }
+
+            <span>
+                Страница @Model.Result.Page от @Model.Result.TotalPages
+            </span>
+
+            @if (Model.Result.Page < Model.Result.TotalPages)
+            {
+                <button type="submit"
+                        name="Filter.Page"
+                        value="@(Model.Result.Page + 1)"
+                        class="btn btn-outline-success">
+                    Следваща →
+                </button>
+            }
+        </form>
+    }
+}
