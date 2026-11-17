@@ -1,0 +1,23 @@
+﻿@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Изход";
+    ViewData["HideMobileNav"] = true;
+}
+
+<section class="sporty-auth">
+    <h1>Изход</h1>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <form class="sporty-auth-form" asp-area="Identity" asp-page="/Account/Logout"
+              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+            <button type="submit" class="sporty-auth-submit">Излез от профила</button>
+        </form>
+    }
+    else
+    {
+        <p class="sporty-auth-description">Излезе успешно от профила си.</p>
+        <a class="sporty-auth-link" asp-page="./Login">Влез отново →</a>
+    }
+</section>

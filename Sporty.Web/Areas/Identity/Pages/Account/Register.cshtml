@@ -1,0 +1,68 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Регистрация";
+    ViewData["HideMobileNav"] = true;
+}
+
+<section class="sporty-auth">
+    <h1>Регистрация</h1>
+
+    <p class="sporty-auth-description">
+        Създай профил и намери своята следваща игра.
+    </p>
+
+    <form id="registerForm" class="sporty-auth-form" method="post" asp-route-returnUrl="@Model.ReturnUrl">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="sporty-auth-field">
+            <label asp-for="Input.Name">Име</label>
+            <input asp-for="Input.Name"
+                   type="text"
+                   placeholder="Иван Петров"
+                   autocomplete="name"
+                   aria-required="true" />
+            <span asp-validation-for="Input.Name" class="text-danger"></span>
+        </div>
+
+        <div class="sporty-auth-field">
+            <label asp-for="Input.Email">Имейл</label>
+            <input asp-for="Input.Email"
+                   type="email"
+                   placeholder="ivan@example.com"
+                   autocomplete="email"
+                   aria-required="true" />
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+
+        <div class="sporty-auth-field">
+            <label asp-for="Input.Password">Парола</label>
+            <input asp-for="Input.Password"
+                   placeholder="••••••••"
+                   autocomplete="new-password"
+                   aria-required="true" />
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+
+        <div class="sporty-auth-field">
+            <label asp-for="Input.ConfirmPassword">Повтори парола</label>
+            <input asp-for="Input.ConfirmPassword"
+                   placeholder="••••••••"
+                   autocomplete="new-password"
+                   aria-required="true" />
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <button id="registerSubmit" type="submit" class="sporty-auth-submit">
+            Регистрация
+        </button>
+    </form>
+
+    <a class="sporty-auth-link" asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">
+        Имаш профил? Влез →
+    </a>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

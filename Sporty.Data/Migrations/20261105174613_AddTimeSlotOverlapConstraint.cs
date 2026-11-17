@@ -10,8 +10,12 @@ namespace Sporty.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // InitialCreate already adds this constraint, so drop it first to keep this migration from failing on a fresh database
             migrationBuilder.Sql(
                 """
+                ALTER TABLE "TimeSlots"
+                DROP CONSTRAINT IF EXISTS "EX_TimeSlots_NoOverlapPerVenue";
+
                 ALTER TABLE "TimeSlots"
                 ADD CONSTRAINT "EX_TimeSlots_NoOverlapPerVenue"
                 EXCLUDE USING gist (
@@ -28,7 +32,7 @@ namespace Sporty.Data.Migrations
             migrationBuilder.Sql(
                 """
                 ALTER TABLE "TimeSlots"
-                DROP CONSTRAINT "EX_TimeSlots_NoOverlapPerVenue";
+                DROP CONSTRAINT IF EXISTS "EX_TimeSlots_NoOverlapPerVenue";
                 """);
         }
     }

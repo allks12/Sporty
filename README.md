@@ -71,6 +71,13 @@ dotnet ef database update \
     --startup-project Sporty.Web \
     --context SportyDbContext
 
+5. Администратор и демо потребител
+
+При стартиране приложението създава ролите User и Admin, както и два потребителя, с които може да се влезе веднага:
+
+* Администратор: admin@sporty.bg / Admin123!
+* Демо потребител: user@sporty.bg / User123!
+
 6. Спиране на базата данни
 
 Когато приключите работа, можете да спрете PostgreSQL контейнера със:

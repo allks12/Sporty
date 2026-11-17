@@ -1,0 +1,187 @@
+﻿@{
+    ViewData["Title"] = "Създай група";
+}
+
+<section class="sporty-create">
+    <h1>Създай група</h1>
+
+    <p class="sporty-create-description">
+        Покани хора за следващата игра.
+    </p>
+
+    <form class="sporty-create-form">
+        <fieldset class="sporty-create-location-choice">
+            <legend>Избери място</legend>
+
+            <button type="button"
+                    id="choose-venue"
+                    class="sporty-create-choice is-active"
+                    aria-pressed="true">
+                На игрище
+            </button>
+
+            <button type="button"
+                    id="choose-custom"
+                    class="sporty-create-choice"
+                    aria-pressed="false">
+                Собствена локация
+            </button>
+        </fieldset>
+
+        <div class="sporty-auth-field">
+            <label for="create-sport">Спорт</label>
+            <select id="create-sport" name="SportId">
+                <option value="">Избери спорт</option>
+                <option value="1">Футбол</option>
+                <option value="2">Баскетбол</option>
+            </select>
+        </div>
+
+        <div class="sporty-auth-field">
+            <label for="create-title">Заглавие</label>
+            <input id="create-title"
+                   name="Title"
+                   type="text"
+                   placeholder="Вечерен мач в Младост" />
+        </div>
+
+        <fieldset id="venue-fields" class="sporty-create-fields">
+            <legend class="visually-hidden">На игрище</legend>
+
+            <div class="sporty-auth-field">
+                <label for="create-venue">Игрище</label>
+                <select id="create-venue" name="VenueId">
+                    <option value="">Избери игрище</option>
+                    <option value="1">
+                        Спортна база Младост • Игрище 2
+                    </option>
+                </select>
+            </div>
+
+            <div class="sporty-auth-field">
+                <label for="create-slot">Свободен час</label>
+                <select id="create-slot" name="TimeSlotId">
+                    <option value="">Избери свободен час</option>
+                    <option value="1">
+                        24 окт. • 18:30–20:00
+                    </option>
+                </select>
+            </div>
+
+            <div class="sporty-auth-field">
+                <label for="create-venue-district">Район</label>
+                <input id="create-venue-district"
+                       type="text"
+                       value="Младост, София"
+                       readonly />
+            </div>
+        </fieldset>
+        <fieldset id="custom-fields"
+                  class="sporty-create-fields"
+                  hidden
+                  disabled>
+            <legend class="visually-hidden">Собствена локация</legend>
+
+            <div class="sporty-auth-field">
+                <label for="create-address">Локация / адрес</label>
+                <textarea id="create-address"
+                          name="CustomLocation"
+                          rows="2"
+                          placeholder="София, Южен парк • Баскетболно игрище"></textarea>
+            </div>
+
+            <div class="sporty-auth-field">
+                <label for="create-district">Район</label>
+                <select id="create-district" name="DistrictId">
+                    <option value="">Избери район</option>
+                    <option value="1">Лозенец</option>
+                    <option value="2">Младост</option>
+                </select>
+            </div>
+
+            <div class="sporty-auth-field">
+                <label for="create-environment">Среда</label>
+                <select id="create-environment" name="IsOutdoors">
+                    <option value="true">На открито</option>
+                    <option value="false">На закрито</option>
+                </select>
+            </div>
+
+            <div class="sporty-auth-field">
+                <label for="create-date">Дата</label>
+                <input id="create-date"
+                       name="Date"
+                       type="date" />
+            </div>
+
+            <div class="sporty-auth-field">
+                <label for="create-start">Начален час</label>
+                <input id="create-start"
+                       name="StartTime"
+                       type="time" />
+            </div>
+
+            <div class="sporty-auth-field">
+                <label for="create-end">Краен час</label>
+                <input id="create-end"
+                       name="EndTime"
+                       type="time" />
+            </div>
+        </fieldset>
+
+        <div class="sporty-auth-field">
+            <label for="create-min-members">
+                Минимален брой участници
+            </label>
+            <input id="create-min-members"
+                   name="MinMembers"
+                   type="number"
+                   min="1"
+                   placeholder="6" />
+        </div>
+
+        <div class="sporty-auth-field">
+            <label for="create-max-members">
+                Максимален брой участници
+            </label>
+            <input id="create-max-members"
+                   name="MaxMembers"
+                   type="number"
+                   min="1"
+                   placeholder="10" />
+        </div>
+
+        <button type="button"
+                class="sporty-auth-submit"
+                disabled>
+            Създай групата
+        </button>
+    </form>
+</section>
+@section Scripts {
+    <script>
+        const venueButton = document.getElementById("choose-venue");
+        const customButton = document.getElementById("choose-custom");
+        const venueFields = document.getElementById("venue-fields");
+        const customFields = document.getElementById("custom-fields");
+
+        function selectLocation(useVenue) {
+            venueFields.hidden = !useVenue;
+            venueFields.disabled = !useVenue;
+
+            customFields.hidden = useVenue;
+            customFields.disabled = useVenue;
+
+            venueButton.classList.toggle("is-active", useVenue);
+            customButton.classList.toggle("is-active", !useVenue);
+
+            venueButton.setAttribute("aria-pressed", String(useVenue));
+            customButton.setAttribute("aria-pressed", String(!useVenue));
+        }
+
+        venueButton.addEventListener("click", () => selectLocation(true));
+        customButton.addEventListener("click", () => selectLocation(false));
+
+        selectLocation(true);
+    </script>
+}
