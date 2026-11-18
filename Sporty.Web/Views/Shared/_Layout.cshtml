@@ -41,6 +41,15 @@
                             Търсене
                         </a>
 
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a class="nav-link text-white"
+                               asp-area=""
+                               asp-controller="MyGroups"
+                               asp-action="Index">
+                                Моите групи
+                            </a>
+                        }
                         <partial name="_LoginPartial"/>
                     </div>
                 </div>
@@ -78,11 +87,14 @@
                 <span>Търсене</span>
             </a>
 
-                <button type="button" class="sporty-mobile-nav-item">
-                    <img src="~/images/nav-groups.svg"
-                    width="22" height="22" alt="" />
-                    <span>Моите групи</span>
-                </button>
+            <a asp-area=""
+               asp-controller="MyGroups"
+               asp-action="Index"
+               class="sporty-mobile-nav-item">
+                <img src="~/images/nav-groups.svg"
+                     width="22" height="22" alt="" />
+                <span>Моите групи</span>
+            </a>
 
                 <button type="button" class="sporty-mobile-nav-item">
                     <img src="~/images/nav-notifications.svg"

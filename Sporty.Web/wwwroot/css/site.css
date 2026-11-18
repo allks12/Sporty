@@ -841,3 +841,190 @@ a.sporty-button-secondary {
         color: #fff;
         text-decoration: none;
     }
+
+.sporty-my-groups {
+    max-width: 760px;
+    margin: 24px auto;
+    color: #18352b;
+}
+
+    .sporty-my-groups h1 {
+        margin-bottom: 16px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+.sporty-my-groups-description {
+    margin-bottom: 24px;
+    color: #637b70;
+}
+
+.sporty-my-groups-create {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 14px 20px;
+    border: 1px solid #dfe8e1;
+    border-radius: 14px;
+    background: #fff;
+    color: #126748;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+    .sporty-my-groups-create:hover {
+        background: #e5f3e9;
+        color: #126748;
+    }
+
+    .sporty-my-groups-create:focus-visible {
+        outline: 3px solid #126748;
+        outline-offset: 4px;
+    }
+
+.sporty-my-groups-section {
+    margin-top: 28px;
+}
+
+    .sporty-my-groups-section h2 {
+        margin-bottom: 16px;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+.sporty-my-groups .sporty-games-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.sporty-my-groups .sporty-game-card-footer {
+    flex-wrap: wrap;
+}
+
+.sporty-my-groups .sporty-game-details:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.sporty-my-groups .sporty-game-card-confirmed .sporty-game-status {
+    background: #e4f8ed;
+    color: #19764b;
+}
+
+.sporty-my-groups .sporty-game-card-completed .sporty-game-status {
+    background: #eef0f3;
+    color: #606773;
+}
+
+.sporty-my-groups .sporty-game-card-completed
+.sporty-game-progress::-webkit-progress-value {
+    background: #606773;
+}
+
+.sporty-my-groups .sporty-game-card-completed
+.sporty-game-progress::-moz-progress-bar {
+    background: #606773;
+}
+
+@media (min-width: 768px) {
+    .sporty-my-groups {
+        margin: 40px auto;
+    }
+
+        .sporty-my-groups h1 {
+            font-size: 32px;
+        }
+}
+
+.sporty-my-groups-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 24px;
+    border: 1px solid #dfe8e1;
+    border-radius: 24px;
+    background: linear-gradient(160deg, #fff, #edf6ef);
+    box-shadow: 0 8px 28px rgb(24 53 43 / 5%);
+    text-align: center;
+}
+
+.sporty-my-groups-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    margin-bottom: 28px;
+    border: 8px solid #eef6df;
+    border-radius: 50%;
+    background: #d3f36b;
+}
+
+.sporty-my-groups-empty h2 {
+    margin-bottom: 16px;
+    color: #18352b;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.sporty-my-groups-empty p {
+    max-width: 380px;
+    margin: 0 0 28px;
+    color: #637b70;
+    line-height: 1.7;
+}
+
+.sporty-my-groups-empty-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+}
+
+    .sporty-my-groups-empty-actions a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 14px 20px;
+        border: 1px solid #126748;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+.sporty-my-groups-empty-primary {
+    background: #126748;
+    color: #fff;
+}
+
+    .sporty-my-groups-empty-primary:hover {
+        background: #0d5239;
+        color: #fff;
+    }
+
+.sporty-my-groups-empty-secondary {
+    background: #fff;
+    color: #126748;
+}
+
+    .sporty-my-groups-empty-secondary:hover {
+        background: #e5f3e9;
+        color: #126748;
+    }
+
+.sporty-my-groups-empty-actions a:focus-visible {
+    outline: 3px solid #126748;
+    outline-offset: 4px;
+}
+
+@media (max-width: 420px) {
+    .sporty-my-groups-empty-actions {
+        flex-direction: column;
+    }
+
+        .sporty-my-groups-empty-actions a {
+            width: 100%;
+        }
+}
