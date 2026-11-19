@@ -11,4 +11,6 @@ public class Venue {
     public District District {get; set;} = null!;
 
     public ICollection<TimeSlot> TimeSlots {get; set;} = new List<TimeSlot>();
+
+    public ICollection<VenuePhoto> Photos { get; set; } = new List<VenuePhoto>();
 }

@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Sporty.Data.Entities.Group>
+@using Sporty.Data.Entities
+@{
+    ViewData["Title"] = "Групи";
+    ViewData["Breadcrumb"] = "Групи";
+    string search = ViewBag.Search as string ?? string.Empty;
+    string status = ViewBag.Status as string ?? string.Empty;
+    string lastCheck = ViewBag.LastCheck as string ?? DateTime.Now.ToString("dd.MM.yyyy • HH:mm");
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-4">
+    <div>
+        <h1 class="h2 fw-bold mb-1">Групи</h1>
+        <p class="text-muted mb-1">Всички групи и техните текущи статуси.</p>
+        <div class="small text-muted">Последна проверка: @lastCheck</div>
+    </div>
+
+    <form asp-area="Admin" asp-controller="Groups" asp-action="RunCheck"
+          asp-route-search="@search" asp-route-status="@status" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-sporty-primary px-4 py-2">
+            Стартирай проверката сега
+        </button>
+    </form>
+</div>
+
+@if (TempData["Success"] is string successMsg)
+{
+    <div class="alert alert-success">@successMsg</div>
+}
+
+<div class="admin-card p-3 mb-4">
+    <form method="get" asp-area="Admin" asp-controller="Groups" asp-action="Index" class="row g-2 align-items-end">
+        <div class="col-md-6">
+            <label for="groupSearch" class="form-label fw-semibold">Търсене</label>
+            <input type="text" id="groupSearch" name="search" value="@search"
+                   class="form-control" placeholder="Спорт, игрище или квартал..." />
+        </div>
+        <div class="col-md-3">
+            <label for="groupStatus" class="form-label fw-semibold">Статус</label>
+            <select id="groupStatus" name="status" class="form-select">
+                <option value="">Всички статуси</option>
+                @foreach (var st in Enum.GetValues<GroupStatus>())
+                {
+                    <option value="@st" selected="@(status == st.ToString() ? "selected" : null)">@st</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-outline-sporty w-100">Филтрирай</button>
+            @if (!string.IsNullOrWhiteSpace(search) || !string.IsNullOrWhiteSpace(status))
+            {
+                <a asp-area="Admin" asp-controller="Groups" asp-action="Index" class="btn btn-outline-sporty">
+                    Изчисти
+                </a>
+            }
+        </div>
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="admin-card p-4 text-muted">
+        Няма намерени групи.
+    </div>
+}
+else
+{
+    <div class="admin-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Група</th>
+                        <th>Дата и час</th>
+                        <th>Място</th>
+                        <th>Статус</th>
+                        <th class="text-end pe-4">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in Model)
+                    {
+                        var sportName = g.Sport?.SportName ?? $"Група #{g.GroupId}";
+                        var location = g.Venue?.Address ?? g.CustomLocation ?? g.District?.DistrictName ?? "—";
+                        var registeredCount = g.Members?.Count(m => m.ParticipantStatus == ParticipantStatus.Registered) ?? 0;
+                        var isCancelled = g.Status == GroupStatus.Cancelled;
+
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-semibold">@sportName</div>
+                                <div class="small text-muted">Участници: @registeredCount / @g.MaxMembers</div>
+                            </td>
+                            <td>@g.StartAt.ToString("dd.MM • HH:mm")</td>
+                            <td>@location</td>
+                            <td>
+                                @switch (g.Status)
+                                {
+                                    case GroupStatus.Open:
+                                        <span class="badge rounded-pill text-bg-primary">Отворена</span>
+                                        break;
+                                    case GroupStatus.Full:
+                                        <span class="badge rounded-pill text-bg-warning">Пълна</span>
+                                        break;
+                                    case GroupStatus.Confirmed:
+                                        <span class="badge rounded-pill text-bg-success">Потвърдена</span>
+                                        break;
+                                    case GroupStatus.Cancelled:
+                                        <span class="badge rounded-pill text-bg-danger">Отменена</span>
+                                        break;
+                                    default:
+                                        <span class="badge rounded-pill text-bg-secondary">@g.Status</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                @if (!isCancelled)
+                                {
+                                    <form asp-area="Admin" asp-controller="Groups" asp-action="Cancel"
+                                          asp-route-id="@g.GroupId" asp-route-search="@search" asp-route-status="@status"
+                                          method="post" class="d-inline"
+                                          onsubmit="return confirm('Сигурни ли сте, че искате да отмените тази група?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-danger px-3">Отмени</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

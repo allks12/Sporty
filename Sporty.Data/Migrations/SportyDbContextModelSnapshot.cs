@@ -391,6 +391,25 @@ namespace Sporty.Data.Migrations
                     b.ToTable("GroupMembers");
                 });
 
+            modelBuilder.Entity("Sporty.Data.Entities.GroupStatusCheckLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CheckedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UpdatedCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GroupStatusCheckLogs");
+                });
+
             modelBuilder.Entity("Sporty.Data.Entities.Sport", b =>
                 {
                     b.Property<int>("SportId")
@@ -530,6 +549,31 @@ namespace Sporty.Data.Migrations
                     b.HasIndex("SportId");
 
                     b.ToTable("Venues");
+                });
+
+            modelBuilder.Entity("Sporty.Data.Entities.VenuePhoto", b =>
+                {
+                    b.Property<int>("VenuePhotoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("VenuePhotoId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("VenuePhotoId");
+
+                    b.HasIndex("VenueId");
+
+                    b.ToTable("VenuePhotos");
                 });
 
             modelBuilder.Entity("Sporty.Data.Identity.ApplicationUser", b =>
@@ -738,6 +782,17 @@ namespace Sporty.Data.Migrations
                     b.Navigation("Sport");
                 });
 
+            modelBuilder.Entity("Sporty.Data.Entities.VenuePhoto", b =>
+                {
+                    b.HasOne("Sporty.Data.Entities.Venue", "Venue")
+                        .WithMany("Photos")
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Venue");
+                });
+
             modelBuilder.Entity("Sporty.Data.Entities.District", b =>
                 {
                     b.Navigation("Venues");
@@ -762,6 +817,8 @@ namespace Sporty.Data.Migrations
 
             modelBuilder.Entity("Sporty.Data.Entities.Venue", b =>
                 {
+                    b.Navigation("Photos");
+
                     b.Navigation("TimeSlots");
                 });
 #pragma warning restore 612, 618
