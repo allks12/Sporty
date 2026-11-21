@@ -1,0 +1,192 @@
+﻿@model IEnumerable<Sporty.Data.Entities.Venue>
+@{
+    ViewData["Title"] = "Игрища";
+    ViewData["Breadcrumb"] = "Игрища";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+        <h1 class="h2 fw-bold mb-1">Игрища</h1>
+        <p class="text-muted mb-0">Локации, на които могат да се организират игри.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-area="Admin" asp-controller="TimeSlots" asp-action="Index" class="btn btn-outline-sporty px-3 py-2">
+            Свободни часове
+        </a>
+        <a asp-area="Admin" asp-controller="Venues" asp-action="Create" class="btn btn-sporty-primary px-3 py-2">
+            + Добави игрище
+        </a>
+    </div>
+</div>
+
+<div class="admin-card p-3 mb-4">
+    <div class="row g-2 align-items-center">
+        <div class="col-md-7">
+            <input type="text" id="venueFilter" class="form-control"
+                   placeholder="Търси по адрес, спорт или квартал..." />
+        </div>
+        <div class="col-md-3">
+            <select id="venueEnvFilter" class="form-select">
+                <option value="">Всички среди</option>
+                <option value="outdoor">Открито</option>
+                <option value="indoor">Закрито</option>
+            </select>
+        </div>
+        <div class="col-md-2 text-md-end text-muted small">
+            Общо: <strong id="venueCount">@Model.Count()</strong>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="admin-card p-4 text-muted">
+        Все още няма добавени игрища. Натисни „+ Добави игрище“, за да създадеш първото.
+    </div>
+}
+else
+{
+    <div class="admin-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="venuesTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Игрище / Адрес</th>
+                        <th>Спорт</th>
+                        <th>Квартал</th>
+                        <th>Среда</th>
+                        <th>Цена / час</th>
+                        <th>Снимки</th>
+                        <th class="text-end pe-4">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var v in Model)
+                    {
+                        var env = v.IsOutdoors ? "outdoor" : "indoor";
+                        var photoCount = v.Photos?.Count ?? 0;
+                        <tr data-env="@env">
+                            <td class="ps-4 fw-semibold">@v.Address</td>
+                            <td>@(v.Sport?.SportName ?? $"Спорт #{v.SportId}")</td>
+                            <td>@(v.District?.DistrictName ?? $"Квартал #{v.DistrictId}")</td>
+                            <td>
+                                @if (v.IsOutdoors)
+                                {
+                                    <span class="badge rounded-pill text-bg-success">Открито</span>
+                                }
+                                else
+                                {
+                                    <span class="badge rounded-pill text-bg-secondary">Закрито</span>
+                                }
+                            </td>
+                            <td>@v.HourlyPrice.ToString("0.00") €</td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-sporty"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#photosModal-@v.VenueId">
+                                    Снимки (@photoCount)
+                                </button>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-1">
+                                    <a asp-area="Admin" asp-controller="TimeSlots" asp-action="Index" asp-route-venueId="@v.VenueId"
+                                       class="btn btn-sm btn-outline-sporty">
+                                        Часове
+                                    </a>
+                                    <a asp-area="Admin" asp-controller="Venues" asp-action="Edit" asp-route-id="@v.VenueId"
+                                       class="btn btn-sm btn-outline-sporty">
+                                        Редакция
+                                    </a>
+                                    <form asp-area="Admin" asp-controller="Venues" asp-action="Delete" asp-route-id="@v.VenueId"
+                                          method="post" class="d-inline"
+                                          onsubmit="return confirm('Сигурни ли сте, че искате да изтриете игрището на адрес @v.Address?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-danger">Изтрий</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @foreach (var v in Model)
+    {
+        <div class="modal fade" id="photosModal-@v.VenueId" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Снимки — @v.Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Затвори"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-area="Admin" asp-controller="Venues" asp-action="AddPhoto" method="post" class="input-group mb-3">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="venueId" value="@v.VenueId" />
+                            <input type="url" name="imageUrl" class="form-control" placeholder="Постави линк към снимка (https://...)" required />
+                            <button type="submit" class="btn btn-sporty-primary">Добави</button>
+                        </form>
+
+                        @if (v.Photos == null || !v.Photos.Any())
+                        {
+                            <div class="text-muted">Няма добавени снимки за това игрище.</div>
+                        }
+                        else
+                        {
+                            <div class="row g-3">
+                                @foreach (var photo in v.Photos.OrderByDescending(p => p.VenuePhotoId))
+                                {
+                                    <div class="col-md-4">
+                                        <div class="card h-100">
+                                            <img src="@photo.ImageUrl" class="card-img-top" style="height:140px;object-fit:cover;" alt="Снимка на игрище" />
+                                            <div class="card-body p-2 text-end">
+                                                <form asp-area="Admin" asp-controller="Venues" asp-action="DeletePhoto" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="photoId" value="@photo.VenuePhotoId" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Премахни</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            const searchInput = document.getElementById('venueFilter');
+            const envSelect = document.getElementById('venueEnvFilter');
+            const countEl = document.getElementById('venueCount');
+            const rows = Array.from(document.querySelectorAll('#venuesTable tbody tr'));
+
+            function filterRows() {
+                const q = (searchInput?.value || '').trim().toLowerCase();
+                const env = envSelect?.value || '';
+                let visible = 0;
+
+                rows.forEach(r => {
+                    const okText = !q || r.innerText.toLowerCase().includes(q);
+                    const okEnv = !env || r.dataset.env === env;
+                    const show = okText && okEnv;
+                    r.style.display = show ? '' : 'none';
+                    if (show) visible++;
+                });
+
+                if (countEl) countEl.textContent = visible;
+            }
+
+            searchInput?.addEventListener('input', filterRows);
+            envSelect?.addEventListener('change', filterRows);
+        })();
+    </script>
+}

@@ -1,0 +1,52 @@
+﻿@model Sporty.Data.Entities.TimeSlot
+@{
+    ViewData["Title"] = "Добави свободен час";
+    ViewData["Breadcrumb"] = "Свободни часове / Нов";
+}
+
+<div class="mb-4">
+    <h1 class="h2 fw-bold mb-1">Добави свободен час</h1>
+    <p class="text-muted mb-0">Създай нов времеви слот за избраното игрище.</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <form asp-area="Admin" asp-controller="TimeSlots" asp-action="Create" method="post" class="admin-card p-4">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="VenueId" class="form-label fw-semibold">Игрище</label>
+                <select asp-for="VenueId" asp-items="ViewBag.Venues" class="form-select"></select>
+                <span asp-validation-for="VenueId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="StartAt" class="form-label fw-semibold">Начало (дата и час)</label>
+                <input asp-for="StartAt" type="datetime-local" class="form-control" />
+                <span asp-validation-for="StartAt" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="EndAt" class="form-label fw-semibold">Край (дата и час)</label>
+                <input asp-for="EndAt" type="datetime-local" class="form-control" />
+                <span asp-validation-for="EndAt" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-4">
+                <input asp-for="IsReserved" class="form-check-input" type="checkbox" />
+                <label asp-for="IsReserved" class="form-check-label">Вече зает / резервиран</label>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-sporty-primary px-4">Добави часа</button>
+                <a asp-area="Admin" asp-controller="TimeSlots" asp-action="Index" asp-route-venueId="@Model.VenueId"
+                   class="btn btn-outline-sporty px-4">Отказ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

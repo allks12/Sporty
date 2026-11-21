@@ -1,0 +1,228 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Sporty.Data.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var currentUserName = User.Identity?.Name ?? "Администратор";
+}
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sporty Администрация</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+            :root {
+                --sporty-green: #156b3f;
+                --sporty-green-dark: #0f5230;
+                --sporty-green-soft: #e9f5ee;
+                --sporty-bg: #f7f9f8;
+                --sporty-border: #e5ebe8;
+                --sporty-text: #18221d;
+                --sporty-muted: #66756e;
+            }
+
+            body {
+                background-color: var(--sporty-bg);
+                color: var(--sporty-text);
+                font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            }
+
+            .admin-wrapper {
+                min-height: 100vh;
+                display: flex;
+            }
+
+            .admin-sidebar {
+                width: 240px;
+                flex-shrink: 0;
+                background-color: #ffffff;
+                border-right: 1px solid var(--sporty-border);
+                padding: 1.5rem 1rem;
+            }
+
+            .admin-brand {
+                color: var(--sporty-green);
+                font-size: 1.5rem;
+                font-weight: 800;
+                text-decoration: none;
+                display: block;
+                padding: 0 0.75rem 1.25rem 0.75rem;
+            }
+
+            .admin-section-label {
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                color: var(--sporty-muted);
+                padding: 0 0.75rem 0.5rem 0.75rem;
+                text-transform: uppercase;
+            }
+
+            .admin-nav-link {
+                display: flex;
+                align-items: center;
+                padding: 0.65rem 0.9rem;
+                border-radius: 10px;
+                color: var(--sporty-text);
+                text-decoration: none;
+                font-weight: 500;
+                margin-bottom: 0.25rem;
+                transition: background-color 0.15s ease, color 0.15s ease;
+            }
+
+            .admin-nav-link:hover {
+                background-color: #f1f6f3;
+                color: var(--sporty-green);
+            }
+
+            .admin-nav-link.active {
+                background-color: var(--sporty-green-soft);
+                color: var(--sporty-green-dark);
+                font-weight: 600;
+            }
+
+            .admin-main-col {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
+            .admin-topbar {
+                background-color: #ffffff;
+                border-bottom: 1px solid var(--sporty-border);
+                padding: 0.85rem 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+
+            .admin-breadcrumb {
+                color: var(--sporty-muted);
+                font-size: 0.9rem;
+            }
+
+            .admin-content {
+                padding: 2rem;
+                max-width: 1200px;
+                width: 100%;
+            }
+
+            .admin-card {
+                background-color: #ffffff;
+                border: 1px solid var(--sporty-border);
+                border-radius: 14px;
+                box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+            }
+
+            .btn-sporty-primary {
+                background-color: var(--sporty-green);
+                border-color: var(--sporty-green);
+                color: #ffffff;
+                font-weight: 600;
+                border-radius: 10px;
+            }
+
+            .btn-sporty-primary:hover {
+                background-color: var(--sporty-green-dark);
+                border-color: var(--sporty-green-dark);
+                color: #ffffff;
+            }
+
+            .btn-outline-sporty {
+                border: 1px solid #d5e0da;
+                color: var(--sporty-text);
+                background-color: #ffffff;
+                border-radius: 10px;
+                font-weight: 500;
+            }
+
+            .btn-outline-sporty:hover {
+                background-color: var(--sporty-green-soft);
+                border-color: var(--sporty-green);
+                color: var(--sporty-green-dark);
+            }
+
+            @@media (max-width: 767.98px) {
+                .admin-wrapper {
+                    flex-direction: column;
+                }
+                .admin-sidebar {
+                    width: 100%;
+                    border-right: none;
+                    border-bottom: 1px solid var(--sporty-border);
+                }
+                .admin-topbar, .admin-content {
+                    padding: 1rem;
+                }
+            }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <a class="admin-brand" asp-area="Admin" asp-controller="Home" asp-action="Index">Sporty</a>
+            <div class="admin-section-label">Администрация</div>
+            <nav>
+                <a class="admin-nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Home" asp-action="Index">
+                    Начало
+                </a>
+                <a class="admin-nav-link @(currentController == "Users" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Users" asp-action="Index">
+                    Потребители
+                </a>
+                <a class="admin-nav-link @(currentController == "Venues" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Venues" asp-action="Index">
+                    Игрища
+                </a>
+                <a class="admin-nav-link @(currentController == "TimeSlots" ? "active" : "")"
+                   asp-area="Admin" asp-controller="TimeSlots" asp-action="Index">
+                    Свободни часове
+                </a>
+                <a class="admin-nav-link @(currentController == "Groups" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Groups" asp-action="Index">
+                    Групи
+                </a>
+                <hr class="my-3" />
+                <a class="admin-nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                    ← Към сайта
+                </a>
+            </nav>
+        </aside>
+
+        <div class="admin-main-col">
+            <header class="admin-topbar">
+                <div class="admin-breadcrumb">
+                    Администрация / <span>@(ViewData["Breadcrumb"] ?? ViewData["Title"] ?? "Начало")</span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="small text-muted d-none d-sm-inline">
+                        @currentUserName • <strong>Администратор</strong>
+                    </span>
+                    <form asp-area="Identity" asp-page="/Account/Logout"
+                          asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                          method="post" class="d-inline m-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-sporty px-3">Изход</button>
+                    </form>
+                </div>
+            </header>
+
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
