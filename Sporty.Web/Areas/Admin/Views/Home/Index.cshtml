@@ -1,6 +1,10 @@
 @{
-    ViewData["Title"] = "Administration";
+    ViewData["Title"] = "Администрация";
 }
 
-<h1 class="h3">Administration</h1>
-<p>Welcome to the admin panel.</p>
+<h1 class="h3 my-3">Администрация</h1>
+
+<div class="list-group">
+    <a class="list-group-item list-group-item-action" asp-controller="Users" asp-action="Index">Потребители</a>
+    <a class="list-group-item list-group-item-action" asp-controller="Groups" asp-action="Index">Групи</a>
+</div>

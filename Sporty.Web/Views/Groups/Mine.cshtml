@@ -1,0 +1,23 @@
+@model List<Sporty.Data.Entities.Group>
+@{
+    ViewData["Title"] = "Моите групи";
+}
+
+<section class="sporty-create">
+    <h1>Моите групи</h1>
+
+    @foreach (var group in Model)
+    {
+        <div class="sporty-details-card mb-3">
+            <h2 class="h5">@group.Sport.SportName • @group.StartAt.ToString("dd.MM.yyyy HH:mm")</h2>
+            <p>@group.CustomLocation, @group.District?.DistrictName</p>
+            <p class="sporty-details-muted">Участници: @group.Members.Count / @group.MaxMembers</p>
+
+            <form asp-action="Delete" asp-route-id="@group.GroupId" method="post">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Изтрий</button>
+            </form>
+        </div>
+    }
+
+    <a class="sporty-button-primary" asp-action="Create">Създай група</a>
+</section>
