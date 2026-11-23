@@ -49,6 +49,15 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group> {
             .HasForeignKey(g => g.SportId)
             .IsRequired();
 
+        //Users are only marked as deleted, so a user row with groups is never removed
+        builder.HasOne(g => g.Organizer)
+            .WithMany()
+            .HasForeignKey(g => g.OrganizerId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(g => g.OrganizerId);
+
         builder.HasIndex(g => g.TimeSlotId)
             .IsUnique()
             .HasFilter("\"TimeSlotId\" IS NOT NULL");

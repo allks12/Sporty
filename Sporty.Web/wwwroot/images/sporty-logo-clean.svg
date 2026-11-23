@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150" fill="none">
+  <title>Sporty</title>
+  <defs>
+    <mask id="pin-cutout">
+      <rect width="120" height="150" fill="white"/>
+      <circle cx="60" cy="58" r="39" fill="black"/>
+    </mask>
+  </defs>
+  <path d="M60 3C28.5 3 3 27.8 3 58.5C3 92 35 125 55.5 144.4C58 146.8 62 146.8 64.5 144.4C85 125 117 92 117 58.5C117 27.8 91.5 3 60 3Z" fill="white" mask="url(#pin-cutout)"/>
+  <path d="M79 40C70 31 48 32 42 43C33 59 83 53 81 71C79 87 51 89 40 78" stroke="white" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="79" cy="40" r="7" fill="white"/>
+</svg>
