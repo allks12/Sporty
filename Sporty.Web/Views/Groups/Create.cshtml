@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Sporty.Services.Groups.CreateGroupInput
+@{
     ViewData["Title"] = "Създай група";
 }
 
@@ -9,7 +10,9 @@
         Покани хора за следващата игра.
     </p>
 
-    <form class="sporty-create-form">
+    <form class="sporty-create-form" asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
         <fieldset class="sporty-create-location-choice">
             <legend>Избери място</legend>
 
@@ -30,11 +33,10 @@
 
         <div class="sporty-auth-field">
             <label for="create-sport">Спорт</label>
-            <select id="create-sport" name="SportId">
+            <select id="create-sport" asp-for="SportId" asp-items="ViewBag.Sports">
                 <option value="">Избери спорт</option>
-                <option value="1">Футбол</option>
-                <option value="2">Баскетбол</option>
             </select>
+            <span asp-validation-for="SportId" class="text-danger"></span>
         </div>
 
         <div class="sporty-auth-field">
@@ -85,18 +87,18 @@
             <div class="sporty-auth-field">
                 <label for="create-address">Локация / адрес</label>
                 <textarea id="create-address"
-                          name="CustomLocation"
+                          asp-for="CustomLocation"
                           rows="2"
                           placeholder="София, Южен парк • Баскетболно игрище"></textarea>
+                <span asp-validation-for="CustomLocation" class="text-danger"></span>
             </div>
 
             <div class="sporty-auth-field">
                 <label for="create-district">Район</label>
-                <select id="create-district" name="DistrictId">
+                <select id="create-district" asp-for="DistrictId" asp-items="ViewBag.Districts">
                     <option value="">Избери район</option>
-                    <option value="1">Лозенец</option>
-                    <option value="2">Младост</option>
                 </select>
+                <span asp-validation-for="DistrictId" class="text-danger"></span>
             </div>
 
             <div class="sporty-auth-field">
@@ -110,15 +112,17 @@
             <div class="sporty-auth-field">
                 <label for="create-date">Дата</label>
                 <input id="create-date"
-                       name="Date"
+                       asp-for="Date"
                        type="date" />
+                <span asp-validation-for="Date" class="text-danger"></span>
             </div>
 
             <div class="sporty-auth-field">
                 <label for="create-start">Начален час</label>
                 <input id="create-start"
-                       name="StartTime"
+                       asp-for="StartTime"
                        type="time" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
             </div>
 
             <div class="sporty-auth-field">
@@ -134,10 +138,11 @@
                 Минимален брой участници
             </label>
             <input id="create-min-members"
-                   name="MinMembers"
+                   asp-for="MinMembers"
                    type="number"
-                   min="1"
+                   min="2"
                    placeholder="6" />
+            <span asp-validation-for="MinMembers" class="text-danger"></span>
         </div>
 
         <div class="sporty-auth-field">
@@ -145,15 +150,15 @@
                 Максимален брой участници
             </label>
             <input id="create-max-members"
-                   name="MaxMembers"
+                   asp-for="MaxMembers"
                    type="number"
-                   min="1"
+                   min="2"
                    placeholder="10" />
+            <span asp-validation-for="MaxMembers" class="text-danger"></span>
         </div>
 
-        <button type="button"
-                class="sporty-auth-submit"
-                disabled>
+        <button type="submit"
+                class="sporty-auth-submit">
             Създай групата
         </button>
     </form>
@@ -182,6 +187,7 @@
         venueButton.addEventListener("click", () => selectLocation(true));
         customButton.addEventListener("click", () => selectLocation(false));
 
-        selectLocation(true);
+        // Groups on a venue are not available yet, so the form starts with "own location"
+        selectLocation(false);
     </script>
 }

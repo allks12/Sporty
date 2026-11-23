@@ -1,7 +1,14 @@
+using Sporty.Data.Identity;
+
 namespace Sporty.Data.Entities;
 
 public class Group {
     public int GroupId {get; set;}
+
+    //The user who created the group; empty only for groups made before this column existed
+    public string? OrganizerId {get; set;}
+    public ApplicationUser? Organizer {get; set;}
+
     public int SportId {get; set;}
     public Sport Sport {get; set;} = null!;
     public DateTime StartAt {get; set;}
