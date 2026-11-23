@@ -27,4 +27,6 @@ public class CreateGroupInput {
     [Required(ErrorMessage = "Въведи максимален брой.")]
     [Range(2, 100)]
     public int? MaxMembers {get; set;}
+    
+    public int? TimeSlotId { get; set; }
 }
