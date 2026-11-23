@@ -8,6 +8,7 @@ namespace Sporty.Services.Groups;
 public interface IGroupService {
     Task<OperationResult<int>> CreateAsync(string organizerId, CreateGroupInput input);
     Task<OperationResult<ParticipantStatus>> JoinAsync(int groupId, string userId, CancellationToken cancellationToken = default);
+    Task<OperationResult<ParticipantStatus?>> LeaveAsync(int groupId, string userId, CancellationToken cancellationToken = default);
     Task<List<Group>> ListByOrganizerAsync(string userId);
     Task<List<Group>> ListAllAsync();
     Task<OperationResult<int>> DeleteAsync(int groupId, string userId, bool isAdmin);
@@ -108,6 +109,81 @@ public class GroupService : IGroupService {
         await transaction.CommitAsync(cancellationToken);
         
         return OperationResult<ParticipantStatus>.Success(participantStatus);
+    }
+    
+    public async Task<OperationResult<ParticipantStatus?>> LeaveAsync(
+        int groupId,
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+
+        await db.Database.ExecuteSqlRawAsync(
+            """SELECT 1 FROM "Groups" WHERE "GroupId" = {0} FOR UPDATE;""",
+            [groupId],
+            cancellationToken);
+
+        var group = await db.Groups
+            .Include(g => g.Members)
+            .FirstOrDefaultAsync(g => g.GroupId == groupId, cancellationToken);
+
+        if (group is null)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return OperationResult<ParticipantStatus?>.Failure(ErrorCode.NotFound, "Групата не съществува.");
+        }
+
+        if (group.OrganizerId == userId)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return OperationResult<ParticipantStatus?>.Failure(ErrorCode.Forbidden, "Организаторът не може да напусне групата.");
+        }
+
+        var now = GetCurrentBulgarianTime();
+
+        if (group.Status is GroupStatus.Cancelled or GroupStatus.Completed)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return OperationResult<ParticipantStatus?>.Failure(ErrorCode.Conflict, "Напускането на тази група не е възможно.");
+        }
+
+        var member = group.Members.FirstOrDefault(m => m.UserId == userId);
+        if (member is null)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return OperationResult<ParticipantStatus?>.Failure(ErrorCode.NotFound, "Не си записан в тази група.");
+        }
+
+        var wasRegistered = member.ParticipantStatus == ParticipantStatus.Registered;
+
+        group.Members.Remove(member);
+        db.GroupMembers.Remove(member);
+
+        ParticipantStatus? promotedStatus = null;
+
+        if (wasRegistered)
+        {
+            var nextWaitlisted = group.Members
+                .Where(m => m.ParticipantStatus == ParticipantStatus.Waitlisted)
+                .OrderBy(m => m.JoinedAt)
+                .ThenBy(m => m.GroupMemberId)
+                .FirstOrDefault();
+
+            if (nextWaitlisted is not null)
+            {
+                nextWaitlisted.ParticipantStatus = ParticipantStatus.Registered;
+                promotedStatus = ParticipantStatus.Registered;
+            }
+            else if (group.Status == GroupStatus.Full)
+            {
+                group.Status = GroupStatus.Open;
+            }
+        }
+
+        await db.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
+        return OperationResult<ParticipantStatus?>.Success(promotedStatus);
     }
     
     private DateTime GetCurrentBulgarianTime()

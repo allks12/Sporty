@@ -136,6 +136,29 @@ public class GroupsController : Controller
         TempData["ErrorMessage"] = result.Errors.FirstOrDefault() ?? "Неуспешно включване в групата";
         return RedirectToAction(nameof(Mine));
     }
+    
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Leave(int id, CancellationToken cancellationToken)
+    {
+        var result = await _groupService.LeaveAsync(
+            id,
+            _userManager.GetUserId(User)!,
+            cancellationToken);
+
+        if (result.Succeeded)
+        {
+            TempData["SuccessMessage"] = result.Value == ParticipantStatus.Registered
+                ? "Напусна групата. Първият от чакащия списък беше преместен като участник."
+                : "Успешно напусна групата.";
+
+            return RedirectToAction(nameof(Mine));
+        }
+
+        TempData["ErrorMessage"] = result.Errors.FirstOrDefault() ?? "Неуспешно напускане на групата.";
+        return RedirectToAction(nameof(Mine));
+    }
 
     [Authorize]
     [HttpGet]
