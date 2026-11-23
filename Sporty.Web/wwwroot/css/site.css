@@ -856,3 +856,54 @@ a.sporty-button-secondary {
         color: #fff;
         text-decoration: none;
     }
+    }
+
+    .sporty-weather-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.sporty-weather-summary img {
+    flex-shrink: 0;
+}
+
+.sporty-weather-summary > div {
+    min-width: 0;
+}
+
+.sporty-weather-summary h2 {
+    margin-bottom: 8px;
+}
+
+.sporty-weather-summary p {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+
+.sporty-weather-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+}
+
+.sporty-weather-metrics > div {
+    padding: 12px;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 50%);
+}
+
+.sporty-weather-metrics dt {
+    margin-bottom: 8px;
+    color: #637b70;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.sporty-weather-metrics dd {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
