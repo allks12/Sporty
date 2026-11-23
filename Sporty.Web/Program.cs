@@ -22,7 +22,10 @@ builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<IGeocodingService, NominatimGeocodingService>();
 
 // Register Weather service stub (used for mock weather forecast and 5-day horizon validation)
-builder.Services.AddScoped<IWeatherService, OpenWeatherMapServiceStub>();
+// builder.Services.AddScoped<IWeatherService, OpenWeatherMapServiceStub>();
+
+// Register Real Weather service (uses HttpClient and IMemoryCache internally)
+builder.Services.AddHttpClient<IWeatherService, OpenWeatherMapService>();
 
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options => {
@@ -47,6 +50,8 @@ builder.Services.ConfigureApplicationCookie(options => {
 
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<IGroupSearchService, GroupSearchService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IUserAdminService, UserAdminService>();
 builder.Services.AddScoped<IdentitySeeder>();
 
 var app = builder.Build();

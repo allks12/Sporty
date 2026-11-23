@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Sporty.Data.Identity;
+using Sporty.Services.Identity;
 
 namespace Sporty.Web.Areas.Admin.Controllers;
 
@@ -10,30 +10,31 @@ namespace Sporty.Web.Areas.Admin.Controllers;
 [Authorize(Roles = AppRoles.Admin)]
 public class UsersController : Controller
 {
+    private readonly IUserAdminService _userAdminService;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public UsersController(UserManager<ApplicationUser> userManager)
+    public UsersController(
+        IUserAdminService userAdminService,
+        UserManager<ApplicationUser> userManager)
     {
+        _userAdminService = userAdminService;
         _userManager = userManager;
     }
 
     public async Task<IActionResult> Index(string? search = null)
     {
-        var query = _userManager.Users.AsQueryable();
+        var users = await _userAdminService.ListAsync();
 
         if (!string.IsNullOrWhiteSpace(search))
         {
             var term = search.Trim().ToLower();
-            query = query.Where(u =>
-                (u.Name != null && u.Name.ToLower().Contains(term)) ||
-                (u.Email != null && u.Email.ToLower().Contains(term)) ||
-                (u.UserName != null && u.UserName.ToLower().Contains(term)));
+            users = users
+                .Where(u =>
+                    (u.Name != null && u.Name.ToLower().Contains(term)) ||
+                    (u.Email != null && u.Email.ToLower().Contains(term)) ||
+                    (u.UserName != null && u.UserName.ToLower().Contains(term)))
+                .ToList();
         }
-
-        var users = await query
-            .OrderBy(u => u.Name)
-            .ThenBy(u => u.Email)
-            .ToListAsync();
 
         ViewBag.Search = search ?? string.Empty;
         ViewBag.CurrentUserId = _userManager.GetUserId(User);
@@ -80,10 +81,10 @@ public class UsersController : Controller
             return RedirectToAction(nameof(Index), new { search });
         }
 
-        var user = await _userManager.FindByIdAsync(id);
-        if (user != null)
+        var result = await _userAdminService.DeleteAsync(id, currentUserId!);
+        if (!result.Succeeded)
         {
-            await _userManager.DeleteAsync(user);
+            TempData["Error"] = result.Errors.FirstOrDefault() ?? "Възникна грешка при изтриването на потребителя.";
         }
 
         return RedirectToAction(nameof(Index), new { search });

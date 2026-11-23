@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sporty.Data.Contexts;
 using Sporty.Data.Entities;
 using Sporty.Data.Identity;
+using Sporty.Services.Groups;
 
 namespace Sporty.Web.Areas.Admin.Controllers;
 
@@ -12,10 +14,17 @@ namespace Sporty.Web.Areas.Admin.Controllers;
 public class GroupsController : Controller
 {
     private readonly SportyDbContext _context;
+    private readonly IGroupService _groupService;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public GroupsController(SportyDbContext context)
+    public GroupsController(
+        SportyDbContext context,
+        IGroupService groupService,
+        UserManager<ApplicationUser> userManager)
     {
         _context = context;
+        _groupService = groupService;
+        _userManager = userManager;
     }
 
     public async Task<IActionResult> Index(string? search = null, string? status = null)
@@ -139,6 +148,20 @@ public class GroupsController : Controller
         await _context.SaveChangesAsync();
         TempData["Success"] = $"Проверката приключи ({DateTime.Now:dd.MM.yyyy • HH:mm}). Обновени групи: {updatedCount}.";
 
+        return RedirectToAction(nameof(Index), new { search, status });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id, string? search = null, string? status = null)
+    {
+        var result = await _groupService.DeleteAsync(id, _userManager.GetUserId(User)!, isAdmin: true);
+        if (!result.Succeeded)
+        {
+            return NotFound();
+        }
+
+        TempData["Success"] = "Групата беше изтрита.";
         return RedirectToAction(nameof(Index), new { search, status });
     }
 }

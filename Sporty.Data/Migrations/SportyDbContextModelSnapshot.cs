@@ -319,6 +319,9 @@ namespace Sporty.Data.Migrations
                     b.Property<int?>("MinMembers")
                         .HasColumnType("integer");
 
+                    b.Property<string>("OrganizerId")
+                        .HasColumnType("text");
+
                     b.Property<int>("SportId")
                         .HasColumnType("integer");
 
@@ -341,6 +344,8 @@ namespace Sporty.Data.Migrations
                     b.HasKey("GroupId");
 
                     b.HasIndex("DistrictId");
+
+                    b.HasIndex("OrganizerId");
 
                     b.HasIndex("SportId");
 
@@ -710,6 +715,11 @@ namespace Sporty.Data.Migrations
                         .WithMany()
                         .HasForeignKey("DistrictId");
 
+                    b.HasOne("Sporty.Data.Identity.ApplicationUser", "Organizer")
+                        .WithMany()
+                        .HasForeignKey("OrganizerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Sporty.Data.Entities.Sport", "Sport")
                         .WithMany("Groups")
                         .HasForeignKey("SportId")
@@ -725,6 +735,8 @@ namespace Sporty.Data.Migrations
                         .HasForeignKey("VenueId");
 
                     b.Navigation("District");
+
+                    b.Navigation("Organizer");
 
                     b.Navigation("Sport");
 

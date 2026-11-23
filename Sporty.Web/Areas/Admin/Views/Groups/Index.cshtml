@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Sporty.Data.Entities.Group>
+@model IEnumerable<Sporty.Data.Entities.Group>
 @using Sporty.Data.Entities
 @{
     ViewData["Title"] = "Групи";
@@ -74,6 +74,7 @@ else
                         <th class="ps-4">Група</th>
                         <th>Дата и час</th>
                         <th>Място</th>
+                        <th>Организатор</th>
                         <th>Статус</th>
                         <th class="text-end pe-4">Действия</th>
                     </tr>
@@ -83,6 +84,7 @@ else
                     {
                         var sportName = g.Sport?.SportName ?? $"Група #{g.GroupId}";
                         var location = g.Venue?.Address ?? g.CustomLocation ?? g.District?.DistrictName ?? "—";
+                        var organizerName = g.Organizer?.Name ?? "—";
                         var registeredCount = g.Members?.Count(m => m.ParticipantStatus == ParticipantStatus.Registered) ?? 0;
                         var isCancelled = g.Status == GroupStatus.Cancelled;
 
@@ -93,6 +95,7 @@ else
                             </td>
                             <td>@g.StartAt.ToString("dd.MM • HH:mm")</td>
                             <td>@location</td>
+                            <td>@organizerName</td>
                             <td>
                                 @switch (g.Status)
                                 {
@@ -114,16 +117,26 @@ else
                                 }
                             </td>
                             <td class="text-end pe-4">
-                                @if (!isCancelled)
-                                {
-                                    <form asp-area="Admin" asp-controller="Groups" asp-action="Cancel"
+                                <div class="d-inline-flex gap-2">
+                                    @if (!isCancelled)
+                                    {
+                                        <form asp-area="Admin" asp-controller="Groups" asp-action="Cancel"
+                                              asp-route-id="@g.GroupId" asp-route-search="@search" asp-route-status="@status"
+                                              method="post" class="d-inline"
+                                              onsubmit="return confirm('Сигурни ли сте, че искате да отмените тази група?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger px-3">Отмени</button>
+                                        </form>
+                                    }
+
+                                    <form asp-area="Admin" asp-controller="Groups" asp-action="Delete"
                                           asp-route-id="@g.GroupId" asp-route-search="@search" asp-route-status="@status"
                                           method="post" class="d-inline"
-                                          onsubmit="return confirm('Сигурни ли сте, че искате да отмените тази група?');">
+                                          onsubmit="return confirm('Сигурни ли сте, че искате да изтриете тази група?');">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-danger px-3">Отмени</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger px-3">Изтрий</button>
                                     </form>
-                                }
+                                </div>
                             </td>
                         </tr>
                     }
