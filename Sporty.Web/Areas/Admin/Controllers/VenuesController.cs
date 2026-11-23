@@ -120,8 +120,15 @@ public class VenuesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddPhoto(int venueId, string imageUrl)
     {
-        if (string.IsNullOrWhiteSpace(imageUrl))
+        var trimmedUrl = imageUrl?.Trim();
+
+        if (string.IsNullOrWhiteSpace(trimmedUrl) ||
+            !Uri.TryCreate(trimmedUrl, UriKind.Absolute, out var parsedUri) ||
+            (parsedUri.Scheme != Uri.UriSchemeHttp && parsedUri.Scheme != Uri.UriSchemeHttps))
+        {
+            TempData["Error"] = "Невалиден URL адрес. Въведете коректен линк, започващ с http:// или https://.";
             return RedirectToAction(nameof(Index));
+        }
 
         var venueExists = await _context.Venues.AnyAsync(v => v.VenueId == venueId);
         if (!venueExists)
@@ -130,11 +137,12 @@ public class VenuesController : Controller
         _context.VenuePhotos.Add(new VenuePhoto
         {
             VenueId = venueId,
-            ImageUrl = imageUrl.Trim(),
+            ImageUrl = parsedUri.ToString(),
             CreatedAt = DateTime.UtcNow
         });
         await _context.SaveChangesAsync();
 
+        TempData["Success"] = "Снимката беше добавена успешно.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -147,6 +155,7 @@ public class VenuesController : Controller
         {
             _context.VenuePhotos.Remove(photo);
             await _context.SaveChangesAsync();
+            TempData["Success"] = "Снимката беше премахната.";
         }
 
         return RedirectToAction(nameof(Index));
