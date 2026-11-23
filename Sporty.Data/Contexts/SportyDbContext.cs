@@ -17,6 +17,8 @@ public class SportyDbContext : IdentityDbContext<ApplicationUser> {
     public DbSet<TimeSlot> TimeSlots => Set<TimeSlot>();
     public DbSet<Group> Groups => Set<Group>();
     public DbSet<GroupMember> GroupMembers => Set<GroupMember>();
+    public DbSet<VenuePhoto> VenuePhotos => Set<VenuePhoto>();
+    public DbSet<GroupStatusCheckLog> GroupStatusCheckLogs => Set<GroupStatusCheckLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
