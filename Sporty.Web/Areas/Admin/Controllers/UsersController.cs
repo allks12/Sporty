@@ -72,19 +72,21 @@ public class UsersController : Controller
     public async Task<IActionResult> Delete(string id, string? search = null)
     {
         if (string.IsNullOrWhiteSpace(id))
-            return RedirectToAction(nameof(Index), new { search });
+        {
+            return BadRequest();
+        }
 
         var currentUserId = _userManager.GetUserId(User);
         if (id == currentUserId)
         {
-            TempData["Error"] = "Не можете да изтриете собствения си акаунт.";
-            return RedirectToAction(nameof(Index), new { search });
+            return BadRequest("Не можете да изтриете собствения си акаунт.");
         }
 
         var result = await _userAdminService.DeleteAsync(id, currentUserId!);
         if (!result.Succeeded)
         {
-            TempData["Error"] = result.Errors.FirstOrDefault() ?? "Възникна грешка при изтриването на потребителя.";
+            TempData["Error"] = result.Errors.FirstOrDefault()
+                ?? "Възникна грешка при изтриването на потребителя.";
         }
 
         return RedirectToAction(nameof(Index), new { search });
