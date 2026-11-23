@@ -480,3 +480,4 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+/Sporty.Web/wwwroot/images/sporty-logo-white.png
