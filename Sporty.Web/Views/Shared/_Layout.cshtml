@@ -12,10 +12,11 @@
 <body>
     <header class="sporty-header">
         <nav class="navbar navbar-expand-sm navbar-dark">
-            <div class="container">
+            <div class="container-fluid px-3">
                 <a class="navbar-brand text-white"
                    asp-area="" asp-controller="Home"
                    asp-action="Index">
+                    <img src="~/images/sporty-logo-clean.svg" alt="" class="sporty-logo" />
                     Sporty
                 </a>
 
@@ -78,11 +79,14 @@
                 <span>Търсене</span>
             </a>
 
-                <button type="button" class="sporty-mobile-nav-item">
+                <a asp-area=""
+                   asp-controller="Groups"
+                   asp-action="Mine"
+                   class="sporty-mobile-nav-item">
                     <img src="~/images/nav-groups.svg"
                     width="22" height="22" alt="" />
                     <span>Моите групи</span>
-                </button>
+                </a>
 
                 <button type="button" class="sporty-mobile-nav-item">
                     <img src="~/images/nav-notifications.svg"
