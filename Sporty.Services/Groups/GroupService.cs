@@ -7,6 +7,7 @@ namespace Sporty.Services.Groups;
 
 public interface IGroupService {
     Task<OperationResult<int>> CreateAsync(string organizerId, CreateGroupInput input);
+    Task<OperationResult<ParticipantStatus>> JoinAsync(int groupId, string userId, CancellationToken cancellationToken = default);
     Task<List<Group>> ListByOrganizerAsync(string userId);
     Task<List<Group>> ListAllAsync();
     Task<OperationResult<int>> DeleteAsync(int groupId, string userId, bool isAdmin);
@@ -47,6 +48,72 @@ public class GroupService : IGroupService {
         db.Groups.Add(group);
         await db.SaveChangesAsync();
         return OperationResult<int>.Success(group.GroupId);
+    }
+
+    public async Task<OperationResult<ParticipantStatus>> JoinAsync(
+        int groupId, 
+        string userId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+        
+        await db.Database.ExecuteSqlRawAsync(
+            """SELECT 1 FROM "Groups" WHERE "GroupId" = {0} FOR UPDATE;""",
+            [groupId],
+            cancellationToken);
+        
+        var group = await db.Groups
+            .Include(g => g.Members)
+            .FirstOrDefaultAsync(g => g.GroupId == groupId, cancellationToken);
+
+        if (group is null)
+        {
+            return OperationResult<ParticipantStatus>.Failure(ErrorCode.NotFound, "Групата не съществува.");
+        }
+
+        var now = GetCurrentBulgarianTime();
+
+        if (group.Status is GroupStatus.Cancelled or GroupStatus.Completed
+            || group.StartAt <= now)
+        {
+            return OperationResult<ParticipantStatus>.Failure(ErrorCode.Conflict,
+                "Включването в тази група не е възможно.");
+        }
+
+        if (group.Members.Any(m => m.UserId == userId))
+        {
+            return OperationResult<ParticipantStatus>.Failure(ErrorCode.Conflict, "Вече си записан в тази група.");
+        }
+        
+        var registeredCount = group.Members.Count(m => m.ParticipantStatus == ParticipantStatus.Registered);
+        var participantStatus = registeredCount < group.MaxMembers
+            ? ParticipantStatus.Registered
+            : ParticipantStatus.Waitlisted;
+
+        group.Members.Add(new GroupMember
+        {
+            UserId = userId,
+            JoinedAt = DateTime.SpecifyKind(timeProvider.GetUtcNow().UtcDateTime, DateTimeKind.Utc),
+            ParticipantStatus = participantStatus
+        });
+
+        if (participantStatus == ParticipantStatus.Registered
+            && registeredCount + 1 >= group.MaxMembers
+            && group.Status == GroupStatus.Open)
+        {
+            group.Status = GroupStatus.Full;
+        }
+
+        await db.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        
+        return OperationResult<ParticipantStatus>.Success(participantStatus);
+    }
+    
+    private DateTime GetCurrentBulgarianTime()
+    {
+        var sofiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Sofia");
+        return TimeZoneInfo.ConvertTime(timeProvider.GetUtcNow(), sofiaTimeZone).DateTime;
     }
 
     public Task<List<Group>> ListByOrganizerAsync(string userId) =>

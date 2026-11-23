@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Sporty.Data.Entities;
 using Sporty.Data.Identity;
 using Sporty.Services.Common;
 using Sporty.Services.Groups;
@@ -111,6 +112,29 @@ public class GroupsController : Controller
 
         await LoadLookupsAsync(cancellationToken);
         return View(input);
+    }
+
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Join(int id, CancellationToken cancellationToken)
+    {
+        var result = await _groupService.JoinAsync(
+            id, 
+            _userManager.GetUserId(User)!, 
+            cancellationToken);
+
+        if (result.Succeeded)
+        {
+            TempData["SuccessMessage"] = result.Value == ParticipantStatus.Waitlisted
+                ? "Включен си в чакащия списък на групата"
+                : "Успешно се включи в групата";
+            
+            return RedirectToAction(nameof(Mine));
+        }
+
+        TempData["ErrorMessage"] = result.Errors.FirstOrDefault() ?? "Неуспешно включване в групата";
+        return RedirectToAction(nameof(Mine));
     }
 
     [Authorize]
