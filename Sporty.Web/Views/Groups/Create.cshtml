@@ -62,12 +62,13 @@
 
             <div class="sporty-auth-field">
                 <label for="create-slot">Свободен час</label>
-                <select id="create-slot" name="TimeSlotId">
-                    <option value="">Избери свободен час</option>
-                    <option value="1">
-                        24 окт. • 18:30–20:00
-                    </option>
-                </select>
+                <div class="sporty-auth-field">
+                    <label for="create-slot">Свободен час</label>
+                    <select id="create-slot" asp-for="TimeSlotId" asp-items="ViewBag.TimeSlots">
+                        <option value="">Избери свободен час</option>
+                    </select>
+                    <span asp-validation-for="TimeSlotId" class="text-danger"></span>
+                </div>
             </div>
 
             <div class="sporty-auth-field">
@@ -176,6 +177,10 @@
 
             customFields.hidden = useVenue;
             customFields.disabled = useVenue;
+
+            if (!useVenue) {
+                document.getElementById("create-slot").value = "";
+            }
 
             venueButton.classList.toggle("is-active", useVenue);
             customButton.classList.toggle("is-active", !useVenue);

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Sporty.Data.Contexts;
 using Sporty.Data.Entities;
 using Sporty.Data.Identity;
 using Sporty.Services.Common;
@@ -15,15 +17,18 @@ public class GroupsController : Controller
     private readonly IGroupSearchService _searchService;
     private readonly IGroupService _groupService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SportyDbContext _db;
 
     public GroupsController(
         IGroupSearchService searchService,
         IGroupService groupService,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        SportyDbContext db)
     {
         _searchService = searchService;
         _groupService = groupService;
         _userManager = userManager;
+        _db = db;
     }
 
     [HttpGet]
@@ -96,8 +101,17 @@ public class GroupsController : Controller
     {
         if (ModelState.IsValid)
         {
-            var result = await _groupService.CreateAsync(
-                _userManager.GetUserId(User)!, input);
+            var result = input.TimeSlotId.HasValue
+                ? await _groupService.CreateForTimeSlotAsync(
+                    _userManager.GetUserId(User)!,
+                    input.TimeSlotId.Value,
+                    input.SportId!.Value,
+                    input.DistrictId,
+                    input.MinMembers!.Value,
+                    input.MaxMembers!.Value,
+                    cancellationToken)
+                : await _groupService.CreateAsync(
+                    _userManager.GetUserId(User)!, input);
 
             if (result.Succeeded)
             {
@@ -192,7 +206,18 @@ public class GroupsController : Controller
         var sports = await _searchService.GetSportsAsync(cancellationToken);
         var districts = await _searchService.GetDistrictsAsync(cancellationToken);
 
+        var availableSlots = await _db.TimeSlots
+            .Where(t => !t.IsReserved && t.Group == null)
+            .OrderBy(t => t.StartAt)
+            .Select(t => new
+            {
+                t.TimeSlotId,
+                Label = $"Игрище #{t.VenueId} — {t.StartAt:dd.MM.yyyy HH:mm}–{t.EndAt:HH:mm}"
+            })
+            .ToListAsync(cancellationToken);
+
         ViewBag.Sports = new SelectList(sports, "Key", "Value");
         ViewBag.Districts = new SelectList(districts, "Key", "Value");
+        ViewBag.TimeSlots = new SelectList(availableSlots, "TimeSlotId", "Label");
     }
 }

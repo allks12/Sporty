@@ -12,6 +12,14 @@ public interface IGroupService {
     Task<List<Group>> ListByOrganizerAsync(string userId);
     Task<List<Group>> ListAllAsync();
     Task<OperationResult<int>> DeleteAsync(int groupId, string userId, bool isAdmin);
+    Task<OperationResult<int>> CreateForTimeSlotAsync(
+        string organizerId,
+        int timeSlotId,
+        int sportId,
+        int? districtId,
+        int minMembers,
+        int maxMembers,
+        CancellationToken cancellationToken = default);
 }
 
 public class GroupService : IGroupService {
@@ -28,23 +36,7 @@ public class GroupService : IGroupService {
             return OperationResult<int>.Failure(ErrorCode.Validation, "Максималният брой не може да е по-малък от минималния.");
         }
 
-        var group = new Group {
-            OrganizerId = organizerId,
-            SportId = input.SportId!.Value,
-            DistrictId = input.DistrictId,
-            CustomLocation = input.CustomLocation!.Trim(),
-            StartAt = input.Date!.Value.ToDateTime(input.StartTime!.Value),
-            MinMembers = input.MinMembers,
-            MaxMembers = input.MaxMembers!.Value,
-            Status = GroupStatus.Open
-        };
-
-        //The organizer is the first member of the group
-        group.Members.Add(new GroupMember {
-            UserId = organizerId,
-            JoinedAt = timeProvider.GetUtcNow().UtcDateTime,
-            ParticipantStatus = ParticipantStatus.Registered
-        });
+        var group = BuildGroup(organizerId, input);
 
         db.Groups.Add(group);
         await db.SaveChangesAsync();
@@ -209,6 +201,119 @@ public class GroupService : IGroupService {
         db.Groups.Remove(group);
         await db.SaveChangesAsync();
         return OperationResult<int>.Success(groupId);
+    }
+
+    public async Task<OperationResult<int>> CreateForTimeSlotAsync(
+        string organizerId, 
+        int timeSlotId, 
+        int sportId, 
+        int? districtId, 
+        int minMembers,
+        int maxMembers, 
+        CancellationToken cancellationToken = default)
+    {
+        if (maxMembers < minMembers)
+        {
+            return OperationResult<int>.Failure(
+                ErrorCode.Validation,
+                "Максималният брой не може да е по-малък от минималния.");
+        }
+        
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+        
+        await db.Database.ExecuteSqlRawAsync(
+            """SELECT 1 FROM "TimeSlots" WHERE "TimeSlotId" = {0} FOR UPDATE;""",
+            [timeSlotId],
+            cancellationToken);
+        
+        var slot = await db.TimeSlots
+            .Include(t => t.Group)
+            .FirstOrDefaultAsync(t => t.TimeSlotId == timeSlotId, cancellationToken);
+
+        if (slot is null)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return OperationResult<int>.Failure(ErrorCode.Conflict,
+                "Избраният час не съществува.");
+        }
+
+        if (slot.IsReserved || slot.Group is not null)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return OperationResult<int>.Failure(ErrorCode.Conflict,
+                "Избраният час вече е резервиран.");
+        }
+        
+        var nowUtc = GetCurrentBulgarianTime();
+        var maxAllowedStart = nowUtc.AddDays(7);
+        
+        var slotStart = DateTime.SpecifyKind(slot.StartAt, DateTimeKind.Unspecified);
+        var nowUnspecified = DateTime.SpecifyKind(nowUtc, DateTimeKind.Unspecified);
+        var maxAllowedUnspecified = DateTime.SpecifyKind(maxAllowedStart, DateTimeKind.Unspecified);
+
+        if (slotStart <= nowUnspecified)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return OperationResult<int>.Failure(ErrorCode.Conflict,
+                "Не може да се резервира минал или текущ час.");
+        }
+
+        if (slotStart > maxAllowedUnspecified)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return OperationResult<int>.Failure(ErrorCode.Validation,
+                "Група с регистрирано игрище може да се създаде най-много до 7 дни напред.");
+        }
+
+        slot.IsReserved = true;
+
+        var input = new CreateGroupInput
+        {
+            SportId = sportId,
+            DistrictId = districtId,
+            CustomLocation = string.Empty,
+            Date = DateOnly.FromDateTime(slotStart),
+            StartTime = TimeOnly.FromDateTime(slotStart),
+            MinMembers = minMembers,
+            MaxMembers = maxMembers
+        };
+
+        var created = await CreateAsync(organizerId, input);
+        if (!created.Succeeded)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            return created;
+        }
+        
+        await db.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
+        return created;
+    }
+    
+    private Group BuildGroup(string organizerId, CreateGroupInput input)
+    {
+        var group = new Group
+        {
+            OrganizerId = organizerId,
+            SportId = input.SportId!.Value,
+            DistrictId = input.DistrictId,
+            CustomLocation = input.CustomLocation!.Trim(),
+            StartAt = input.Date!.Value.ToDateTime(input.StartTime!.Value),
+            MinMembers = input.MinMembers,
+            MaxMembers = input.MaxMembers!.Value,
+            Status = GroupStatus.Open
+        };
+
+        // The organizer is the first member of the group
+        group.Members.Add(new GroupMember
+        {
+            UserId = organizerId,
+            JoinedAt = DateTime.SpecifyKind(timeProvider.GetUtcNow().UtcDateTime, DateTimeKind.Utc),
+            ParticipantStatus = ParticipantStatus.Registered
+        });
+
+        return group;
     }
 
     private IQueryable<Group> Query() =>
