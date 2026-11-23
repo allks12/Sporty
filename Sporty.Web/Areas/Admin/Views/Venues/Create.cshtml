@@ -1,0 +1,82 @@
+﻿@model Sporty.Data.Entities.Venue
+@{
+    ViewData["Title"] = "Ново игрище";
+    ViewData["Breadcrumb"] = "Игрища / Ново";
+}
+
+<div class="mb-4">
+    <h1 class="h2 fw-bold mb-1">Добавяне на игрище</h1>
+    <p class="text-muted mb-0">Въведи данни за новото игрище.</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-7">
+        <form asp-area="Admin" asp-controller="Venues" asp-action="Create" method="post" class="admin-card p-4">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label fw-semibold">Адрес</label>
+                <input asp-for="Address" class="form-control" placeholder="напр. ж.к. Младост 1, Спортна база" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="SportId" class="form-label fw-semibold">Спорт</label>
+                    <select asp-for="SportId" asp-items="ViewBag.Sports" class="form-select"></select>
+                    <span asp-validation-for="SportId" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DistrictId" class="form-label fw-semibold">Район / Квартал</label>
+                    <select asp-for="DistrictId" asp-items="ViewBag.Districts" class="form-select"></select>
+                    <span asp-validation-for="DistrictId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="HourlyPrice" class="form-label fw-semibold">Цена на час (€)</label>
+                    <input asp-for="HourlyPrice" type="number" step="0.01" min="0" class="form-control" />
+                    <span asp-validation-for="HourlyPrice" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold d-block">Среда</label>
+                    <div class="form-check mt-2">
+                        <input asp-for="IsOutdoors" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsOutdoors" class="form-check-label">На открито</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="previewPhotoInput" class="form-label fw-semibold">Снимка (URL за преглед)</label>
+                <input type="url" id="previewPhotoInput" class="form-control" placeholder="https://..." />
+                <div id="previewPhotoBox" class="mt-2"></div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-sporty-primary px-4">Запази</button>
+                <a asp-area="Admin" asp-controller="Venues" asp-action="Index" class="btn btn-outline-sporty px-4">Отказ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const input = document.getElementById('previewPhotoInput');
+            const box = document.getElementById('previewPhotoBox');
+            input?.addEventListener('input', () => {
+                const url = input.value.trim();
+                box.innerHTML = url
+                    ? `<img src="${url}" class="img-thumbnail" style="max-height:180px;object-fit:cover;" alt="Преглед" />`
+                    : '';
+            });
+        })();
+    </script>
+}
