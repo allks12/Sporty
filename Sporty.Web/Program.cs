@@ -49,6 +49,8 @@ builder.Services.ConfigureApplicationCookie(options => {
 });
 
 builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<IGroupCheckService, GroupCheckService>();
+builder.Services.AddHostedService<GroupCheckWorker>();
 builder.Services.AddScoped<IGroupSearchService, GroupSearchService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IUserAdminService, UserAdminService>();

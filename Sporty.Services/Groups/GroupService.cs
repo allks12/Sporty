@@ -87,9 +87,7 @@ public class GroupService : IGroupService {
         }
         
         var registeredCount = group.Members.Count(m => m.ParticipantStatus == ParticipantStatus.Registered);
-        var participantStatus = registeredCount < group.MaxMembers
-            ? ParticipantStatus.Registered
-            : ParticipantStatus.Waitlisted;
+        var participantStatus = ParticipationRules.DecideStatus(registeredCount, group.MaxMembers);
 
         group.Members.Add(new GroupMember
         {
@@ -99,10 +97,9 @@ public class GroupService : IGroupService {
         });
 
         if (participantStatus == ParticipantStatus.Registered
-            && registeredCount + 1 >= group.MaxMembers
-            && group.Status == GroupStatus.Open)
+            && registeredCount + 1 >= group.MaxMembers)
         {
-            group.Status = GroupStatus.Full;
+            GroupStateMachine.TryTransition(group, GroupStatus.Full);
         }
 
         await db.SaveChangesAsync(cancellationToken);
@@ -163,11 +160,7 @@ public class GroupService : IGroupService {
 
         if (wasRegistered)
         {
-            var nextWaitlisted = group.Members
-                .Where(m => m.ParticipantStatus == ParticipantStatus.Waitlisted)
-                .OrderBy(m => m.JoinedAt)
-                .ThenBy(m => m.GroupMemberId)
-                .FirstOrDefault();
+            var nextWaitlisted = ParticipationRules.NextFromWaitlist(group.Members);
 
             if (nextWaitlisted is not null)
             {
@@ -176,7 +169,7 @@ public class GroupService : IGroupService {
             }
             else if (group.Status == GroupStatus.Full)
             {
-                group.Status = GroupStatus.Open;
+                GroupStateMachine.TryTransition(group, GroupStatus.Open);
             }
         }
 
