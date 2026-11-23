@@ -12,10 +12,11 @@
 <body>
     <header class="sporty-header">
         <nav class="navbar navbar-expand-sm navbar-dark">
-            <div class="container">
+            <div class="container-fluid px-3">
                 <a class="navbar-brand text-white"
                    asp-area="" asp-controller="Home"
                    asp-action="Index">
+                    <img src="~/images/sporty-logo-clean.svg" alt="" class="sporty-logo" />
                     Sporty
                 </a>
 
@@ -40,6 +41,15 @@
                            asp-action="Index">
                             Търсене
                         </a>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a class="nav-link text-white"
+                               asp-area=""
+                               asp-controller="Notifications"
+                               asp-action="Index">
+                                Известия
+                            </a>
+                        }
 
                         @if (User.Identity?.IsAuthenticated == true)
                         {
@@ -87,6 +97,14 @@
                 <span>Търсене</span>
             </a>
 
+                <a asp-area=""
+                   asp-controller="Groups"
+                   asp-action="Mine"
+                   class="sporty-mobile-nav-item">
+                    <img src="~/images/nav-groups.svg"
+                    width="22" height="22" alt="" />
+                    <span>Моите групи</span>
+                </a>
             <a asp-area=""
                asp-controller="MyGroups"
                asp-action="Index"
@@ -96,11 +114,14 @@
                 <span>Моите групи</span>
             </a>
 
-                <button type="button" class="sporty-mobile-nav-item">
-                    <img src="~/images/nav-notifications.svg"
-                    width="22" height="22" alt="" />
-                    <span>Известия</span>
-                </button>
+                <a asp-area=""
+   asp-controller="Notifications"
+   asp-action="Index"
+   class="sporty-mobile-nav-item">
+    <img src="~/images/nav-notifications.svg"
+         width="22" height="22" alt="" />
+    <span>Известия</span>
+</a>
             </nav>                 
         }
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
